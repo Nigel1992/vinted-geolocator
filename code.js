@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Vinted Country & City Filter (client-side)
 // @namespace    https://greasyfork.org/en/users/1550823-nigel1992
-// @version      1.1.5
+// @version      1.1.6
 // @description  Adds a country and city indicator to Vinted items and allows client-side visual filtering by item location. The script uses Vinted’s public item API to retrieve country and city information. It does not perform purchases, send messages, or modify anything on Vinted servers.
 // @author       Nigel1992
 // @license      MIT
@@ -57,6 +57,7 @@
     ========================== */
 
     let selectedCountry = sessionStorage.getItem('vinted_filter_country') || '';
+    let isFilterEnabled = sessionStorage.getItem('vinted_filter_enabled') !== 'false'; // Default: enabled
     let isProcessing = false;
     let isPausedForCaptcha = false;
     let captchaPopup = null;
@@ -211,6 +212,57 @@
             </div>
 
             <div id="vinted-menu-content">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 12px;
+                    background: #f0f9f9;
+                    border-radius: 10px;
+                    margin-bottom: 16px;
+                    border: 2px solid #007782;
+                ">
+                    <span style="color: #333; font-weight: 500; font-size: 14px;">Filter Active</span>
+                    <label style="
+                        position: relative;
+                        display: inline-block;
+                        width: 50px;
+                        height: 26px;
+                        cursor: pointer;
+                    ">
+                        <input type="checkbox" id="vinted-filter-toggle" ${isFilterEnabled ? 'checked' : ''} style="
+                            opacity: 0;
+                            width: 0;
+                            height: 0;
+                        ">
+                        <span id="vinted-toggle-slider" style="
+                            position: absolute;
+                            cursor: pointer;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background-color: ${isFilterEnabled ? '#007782' : '#ccc'};
+                            transition: 0.3s;
+                            border-radius: 26px;
+                        ">
+                            <span style="
+                                position: absolute;
+                                content: '';
+                                height: 20px;
+                                width: 20px;
+                                left: ${isFilterEnabled ? '27px' : '3px'};
+                                bottom: 3px;
+                                background-color: white;
+                                transition: 0.3s;
+                                border-radius: 50%;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                            "></span>
+                        </span>
+                    </label>
+                </div>
+
+                <div id="vinted-filter-options" style="${isFilterEnabled ? '' : 'opacity: 0.5; pointer-events: none;'}">
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 14px;">
                         Filter by Country:
@@ -401,6 +453,7 @@
                         ✅ Resume Manually
                     </button>
                 </div>
+                </div>
 
                 <button id="vinted-clear-cache" style="
                     width: 100%;
@@ -461,7 +514,7 @@
                     padding-top: 8px;
                     border-top: 1px solid #eee;
                 ">
-                    v1.1.5 • Jan 1, 2026
+                    v1.1.6 • Jan 1, 2026
                 </div>
             </div>
         `;
@@ -496,6 +549,34 @@
             sessionStorage.setItem('vinted_filter_country', selectedCountry);
             updateStatusMessage(selectedCountry ? `Filtering by ${select.options[select.selectedIndex].text.replace(/^[^\s]+\s/, '')}...` : 'Showing all countries...');
             applyFilter();
+        });
+
+        // Filter enable/disable toggle
+        const filterToggle = document.getElementById('vinted-filter-toggle');
+        filterToggle.addEventListener('change', () => {
+            isFilterEnabled = filterToggle.checked;
+            sessionStorage.setItem('vinted_filter_enabled', isFilterEnabled);
+            
+            const slider = document.getElementById('vinted-toggle-slider');
+            const knob = slider.querySelector('span');
+            const filterOptions = document.getElementById('vinted-filter-options');
+            
+            if (isFilterEnabled) {
+                slider.style.backgroundColor = '#007782';
+                knob.style.left = '27px';
+                filterOptions.style.opacity = '1';
+                filterOptions.style.pointerEvents = 'auto';
+                updateStatusMessage('Filter enabled. Processing items...');
+                applyFilter();
+            } else {
+                slider.style.backgroundColor = '#ccc';
+                knob.style.left = '3px';
+                filterOptions.style.opacity = '0.5';
+                filterOptions.style.pointerEvents = 'none';
+                updateStatusMessage('Filter disabled. Browsing normally.');
+                // Reset all items to normal visibility
+                resetAllItems();
+            }
         });
 
         // Toggle menu minimize/expand
@@ -718,6 +799,12 @@
     ========================== */
 
     function applyFilter() {
+        // Skip filtering if disabled
+        if (!isFilterEnabled) {
+            resetAllItems();
+            return;
+        }
+
         let matches = 0;
         let total = 0;
 
@@ -754,6 +841,21 @@
 
         // Update progress bar
         updateProgressBar();
+    }
+
+    function resetAllItems() {
+        // Reset all items to normal visibility when filter is disabled
+        processedItems.forEach(item => {
+            item.element.style.opacity = '1';
+            item.element.style.filter = 'none';
+            item.element.style.transition = 'opacity 0.3s ease, filter 0.3s ease';
+        });
+        
+        // Update counters
+        const matchNumberEl = document.getElementById('vinted-match-number');
+        const totalNumberEl = document.getElementById('vinted-total-number');
+        if (matchNumberEl) matchNumberEl.textContent = '-';
+        if (totalNumberEl) totalNumberEl.textContent = '-';
     }
 
     function updateQueueStatus() {
