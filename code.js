@@ -518,7 +518,7 @@
                     padding-top: 8px;
                     border-top: 1px solid #eee;
                 ">
-                    v1.1.8 • Jan 1, 2026
+                    v1.1.8 • Jan 2, 2026
                 </div>
             </div>
         `;
