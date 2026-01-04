@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Vinted Country & City Filter (client-side)
 // @namespace    https://greasyfork.org/en/users/1550823-nigel1992
-// @version      1.1.8
+// @version      1.1.9
 // @description  Adds a country and city indicator to Vinted items and allows client-side visual filtering by item location. The script uses Vinted’s public item API to retrieve country and city information. It does not perform purchases, send messages, or modify anything on Vinted servers.
 // @author       Nigel1992
 // @license      MIT
@@ -11,6 +11,7 @@
 // @match        https://www.vinted.it/*
 // @match        https://www.vinted.es/*
 // @match        https://www.vinted.de/*
+// @match        https://www.vinted.se/*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
@@ -25,13 +26,14 @@
     function isAllowedPage() {
         const path = location.pathname;
         // Allow: homepage ("/"), catalog pages ("/catalog/..."), and search results
-        return path === '/' || 
-               path.startsWith('/catalog') || 
+        return path === '/' ||
+               path.startsWith('/catalog') ||
                path.startsWith('/vetements') ||  // French catalog
                path.startsWith('/kleding') ||    // Dutch catalog
                path.startsWith('/ropa') ||       // Spanish catalog
                path.startsWith('/abbigliamento') || // Italian catalog
-               path.startsWith('/kleidung');     // German catalog
+               path.startsWith('/kleidung') ||   // German catalog
+               path.startsWith('/kläder');       // Swedish catalog
     }
 
     // Exit early if not on an allowed page
@@ -77,7 +79,10 @@
         italy: '🇮🇹',
         portugal: '🇵🇹',
         poland: '🇵🇱',
-        uk: '🇬🇧'
+        uk: '🇬🇧',
+        sweden: '🇸🇪',
+        denmark: '🇩🇰',
+        finland: '🇫🇮'
     };
 
     /* =========================
@@ -291,6 +296,9 @@
                         <option value="italy">🇮🇹 Italy</option>
                         <option value="portugal">🇵🇹 Portugal</option>
                         <option value="poland">🇵🇱 Poland</option>
+                        <option value="sweden">🇸🇪 Sweden</option>
+                        <option value="denmark">🇩🇰 Denmark</option>
+                        <option value="finland">🇫🇮 Finland</option>
                         <option value="uk">🇬🇧 United Kingdom</option>
                     </select>
                 </div>
@@ -518,7 +526,7 @@
                     padding-top: 8px;
                     border-top: 1px solid #eee;
                 ">
-                    v1.1.8 • Jan 2, 2026
+                    v1.1.9 • Jan 4, 2026
                 </div>
             </div>
         `;

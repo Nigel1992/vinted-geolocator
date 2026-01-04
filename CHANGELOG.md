@@ -5,6 +5,12 @@ All notable changes to the Vinted Geolocator userscript will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.9] - 2026-01-04
+
+### Added
+- **Nordic countries support** - Added vinted.se with Swedish catalog path `/kläder`
+- Country flags 🇸🇪 🇩🇰 🇫🇮 and filtering for Swedish, Danish, and Finnish sellers
+
 ## [1.1.8] - 2026-01-02
 
 ### Fixed
