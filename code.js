@@ -146,6 +146,12 @@
                             onCaptchaSolved();
                             return;
                         }
+                        // Also check if the HTML response contains "message_code" (captcha solved)
+                        if (text.includes('message_code')) {
+                            console.log('[Vinted Filter] Captcha solved! Found message_code in HTML response');
+                            onCaptchaSolved();
+                            return;
+                        }
                     }
                 }
             } catch (e) {
