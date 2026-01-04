@@ -6,7 +6,8 @@
 
 > Reveal hidden seller locations on Vinted and filter items by country with a beautiful, intuitive UI.
 
-<img width="1287" height="555" alt="image" src="https://github.com/user-attachments/assets/9825deca-036a-413e-ac92-5fe2165cf980" />
+<img width="1287" height="555" alt="image" src="<img width="1179" height="601" alt="image" src="https://github.com/user-attachments/assets/981cf27b-1a9a-4f2f-b696-aebcf60a2456" />
+" />
 
 
 ## ✨ Features
