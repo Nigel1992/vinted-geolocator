@@ -1108,8 +1108,12 @@
                 itemIds.forEach(itemId => {
                     const item = processedItems.get(itemId);
                     if (item?.element) {
-                        // Add duplicate indicator
-                        let duplicateBadge = item.element.querySelector('.vinted-duplicate-badge');
+                        // Add duplicate indicator, anchored to the image overlay container if available
+                        const container = item.element.querySelector('a[data-testid$="--overlay-link"]')
+                            || item.element.querySelector('.new-item-box__overlay')
+                            || item.element;
+                        let duplicateBadge = container.querySelector('.vinted-duplicate-badge')
+                            || item.element.querySelector('.vinted-duplicate-badge');
                         if (!duplicateBadge) {
                             duplicateBadge = document.createElement('div');
                             duplicateBadge.className = 'vinted-duplicate-badge';
@@ -1119,17 +1123,22 @@
                                 position: absolute;
                                 bottom: 8px;
                                 left: 8px;
-                                background: linear-gradient(135deg, rgba(233,30,99,0.95) 0%, rgba(194,7,20,0.95) 100%);
+                                background: linear-gradient(135deg, rgba(233,30,99,0.9) 0%, rgba(194,7,20,0.9) 100%);
+                                color: #fff;
                                 padding: 4px 8px;
                                 font-size: 12px;
                                 border-radius: 8px;
                                 pointer-events: none;
-                                box-shadow: 0 2px 8px rgba(233,30,99,0.4);
+                                box-shadow: 0 4px 10px rgba(233,30,99,0.35);
                                 z-index: 11;
                                 font-weight: 600;
+                                backdrop-filter: saturate(120%) blur(1px);
                             `;
-                            item.element.style.position = 'relative';
-                            item.element.appendChild(duplicateBadge);
+                            container.style.position = container.style.position || 'relative';
+                            container.appendChild(duplicateBadge);
+                        } else if (duplicateBadge.parentElement !== container) {
+                            // Move badge into the correct container if needed
+                            container.appendChild(duplicateBadge);
                         }
                         // Always update label/title to reflect current seller
                         const label = item.seller ? `👤 ${shortUsername(item.seller)}` : '👤';
