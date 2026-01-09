@@ -5,6 +5,37 @@ All notable changes to the Vinted Geolocator userscript will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-01-09
+
+### Added
+- **Seller flagging system** - Click badge on any item to flag/unflag the seller
+  - Persistent storage of flagged sellers across sessions
+  - Automatic detection of items from previously flagged sellers
+  - Visual 🚩/🏷️ badge toggle (top-left of items)
+- **Pause/Resume control** - New toggle button in header (⏸/▶) to pause/resume processing
+  - Pauses both scanning and API calls cleanly
+  - Status updates reflect paused state
+- **Instant cached loading** - Cached items now load immediately during scan
+  - No more queue delay for previously processed items
+  - Significant performance improvement on repeat visits
+
+### Changed
+- **Duplicate detection improvements**
+  - Now groups by seller username when available (more accurate)
+  - Changed badge icon from 🔄 to 👤 for clarity
+  - Displays seller username on duplicate badges (e.g., "👤 john_d…")
+  - Color-coded per seller: each seller gets a consistent gradient color
+  - Repositioned badges to bottom-left of item image overlay
+  - Full seller name shown in badge tooltip
+- Cache format now includes seller username (backward compatible)
+- Seller flag badge includes username in storage and display
+
+### Technical
+- New state: `isPaused`, `flaggedSellers` Set, `sellerBadgeColors` Map
+- Seller color palette with 10 distinct gradients cycling per page
+- Badge anchoring improved to use image overlay container for accurate positioning
+- Duplicate badge styling: translucent gradient with subtle blur for visibility
+
 ## [1.4.0] - 2026-01-09
 
 ### Added
