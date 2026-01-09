@@ -1117,8 +1117,8 @@
                             duplicateBadge.title = 'Same seller';
                             duplicateBadge.style.cssText = `
                                 position: absolute;
-                                top: 8px;
-                                right: 8px;
+                                bottom: 8px;
+                                left: 8px;
                                 background: linear-gradient(135deg, rgba(233,30,99,0.95) 0%, rgba(194,7,20,0.95) 100%);
                                 padding: 4px 8px;
                                 font-size: 12px;
