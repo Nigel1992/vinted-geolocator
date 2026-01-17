@@ -112,10 +112,18 @@
             'width=500,height=600,scrollbars=yes,resizable=yes'
         );
         
-        updateStatusMessage('🔓 Solving captcha... complete it in the popup');
+        // Check if popup was blocked
+        if (!captchaPopup || captchaPopup.closed || typeof captchaPopup.closed === 'undefined') {
+            console.warn('[Vinted Filter] Popup was blocked by browser. Please allow popups.');
+            updateStatusMessage('⚠️ Popup blocked! Please allow popups and refresh the page');
+            return false;
+        }
+        
+        updateStatusMessage('🔓 Auto-solving captcha... please complete it in the popup');
         
         // Start checking if captcha is solved
         startCaptchaCheck();
+        return true;
     }
 
     function startCaptchaCheck() {
@@ -184,9 +192,28 @@
 
         hasShownCaptchaAlert = false;
         
-        // Close popup
+        // Close popup - try multiple times to ensure it closes
         if (captchaPopup && !captchaPopup.closed) {
-            captchaPopup.close();
+            console.log('[Vinted Filter] Attempting to close captcha popup...');
+            try {
+                captchaPopup.close();
+            } catch (e) {
+                console.warn('[Vinted Filter] Error closing popup:', e);
+            }
+            
+            // Retry closing after a short delay in case it didn't work immediately
+            setTimeout(() => {
+                if (captchaPopup && !captchaPopup.closed) {
+                    console.log('[Vinted Filter] Retrying popup close...');
+                    try {
+                        captchaPopup.close();
+                    } catch (e) {
+                        console.warn('[Vinted Filter] Error on retry:', e);
+                    }
+                }
+                captchaPopup = null;
+            }, 500);
+        } else {
             captchaPopup = null;
         }
         
@@ -435,41 +462,12 @@
                             font-weight: 600;
                             color: #c62828;
                         ">
-                            <span style="font-size: 20px;">⚠️</span>
-                            <span>API Blocked</span>
+                            <span style="font-size: 20px;">🔓</span>
+                            <span>Auto-Solving Captcha</span>
                         </div>
-                        <p style="margin: 0 0 12px 0; color: #555; line-height: 1.5;">
-                            Solving captcha automatically. Complete it in the popup window.
+                        <p style="margin: 0; color: #555; line-height: 1.5;">
+                            A popup window has been opened to automatically solve the captcha. Please complete the captcha in the popup window. The script will automatically detect when it's solved and continue processing.
                         </p>
-                        <button id="vinted-open-captcha" style="
-                            width: 100%;
-                            padding: 10px;
-                            background: #f44336;
-                            color: white;
-                            border: none;
-                            border-radius: 8px;
-                            font-weight: 600;
-                            cursor: pointer;
-                            font-size: 13px;
-                            margin-bottom: 8px;
-                            transition: background 0.2s;
-                        " onmouseover="this.style.background='#d32f2f'" onmouseout="this.style.background='#f44336'">
-                            🔓 Reopen Captcha Popup
-                        </button>
-                        <button id="vinted-resume" style="
-                            width: 100%;
-                            padding: 10px;
-                            background: #4caf50;
-                            color: white;
-                            border: none;
-                            border-radius: 8px;
-                            font-weight: 600;
-                            cursor: pointer;
-                            font-size: 13px;
-                            transition: background 0.2s;
-                        " onmouseover="this.style.background='#388e3c'" onmouseout="this.style.background='#4caf50'">
-                            ✅ Resume Manually
-                        </button>
                     </div>
 
                     <div style="display: flex; gap: 8px; margin-top: 12px;">
@@ -986,26 +984,6 @@
             }
         });
 
-        document.getElementById('vinted-open-captcha').onclick = () => {
-            openCaptchaPopup();
-        };
-
-        document.getElementById('vinted-resume').onclick = () => {
-            // Stop captcha checking
-            if (captchaCheckInterval) {
-                clearInterval(captchaCheckInterval);
-                captchaCheckInterval = null;
-            }
-            // Close popup if open
-            if (captchaPopup && !captchaPopup.closed) {
-                captchaPopup.close();
-                captchaPopup = null;
-            }
-            isPausedForCaptcha = false;
-            document.getElementById('vinted-captcha-warning').style.display = 'none';
-            updateStatusMessage('Resuming processing...');
-        };
-
         // Clear cache button
         document.getElementById('vinted-clear-cache').onclick = () => {
             if (confirm('Clear all cached item data? This will re-process all items.')) {
@@ -1292,12 +1270,11 @@
                 if (warningEl) {
                     warningEl.style.display = 'block';
                 }
-                if (!hasShownCaptchaAlert) {
-                    hasShownCaptchaAlert = true;
-                    alert('Vinted is asking for a captcha. A popup will open to solve it automatically.');
-                }
-                // Auto-open captcha popup
+                
+                // Automatically open captcha popup
+                console.log('[Vinted Filter] Captcha detected (403). Opening popup automatically...');
                 openCaptchaPopup();
+                
                 isProcessing = false;
                 return;
             }

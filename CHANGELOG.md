@@ -1,11 +1,18 @@
 ## [1.4.2] - 2026-01-17
 
 ### Added
-- Split the menu into **Main** and **Settings** tabs with persistent active tab across sessions.
-- Added a subtle fade/slide animation when switching tabs for smoother UX.
+- **Fully automatic captcha handling** - No manual intervention needed
+  - Popup opens automatically when 403 is detected
+  - Automatically checks for 200 status every 1.5 seconds
+  - Popup closes automatically when captcha is solved
+  - Retry logic ensures popup closes reliably
+- Split the menu into **Main** and **Settings** tabs with persistent active tab across sessions
+- Added a subtle fade/slide animation when switching tabs for smoother UX
 
 ### Changed
-- Captcha popup now auto-opens on 403 and auto-closes immediately on a 200 response, with a single alert to avoid spam.
+- Removed manual "Reopen Captcha Popup" and "Resume Manually" buttons
+- Simplified captcha warning to show auto-solve status only
+- Improved popup blocker detection and error handling
 
 ## [1.4.1.1] - 2026-01-10
 
