@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Vinted Country & City Filter (client-side)
 // @namespace    https://greasyfork.org/en/users/1550823-nigel1992
-// @version      1.4.3
+// @version      1.4.4
 // @description  Adds a country and city indicator to Vinted items and allows client-side visual filtering by including/excluding selected countries. The script uses Vinted’s public item API to retrieve country and city information. It does not perform purchases, send messages, or modify anything on Vinted servers.
 // @author       Nigel1992
 // @license      MIT
@@ -132,13 +132,13 @@
         
         // Check if popup was blocked
         if (!captchaPopup || captchaPopup.closed || typeof captchaPopup.closed === 'undefined') {
-            console.warn('[Vinted Filter] Popup was blocked by browser. Please allow popups.');
-            updateStatusMessage('⚠️ Popup blocked! Please allow popups and refresh the page');
+            console.warn('[Vinted Filter] Popup was blocked by browser. Please allow popups for this site and refresh the page.');
+            updateStatusMessage('⚠️ Popup blocked! Please allow popups for this site in your browser settings, then refresh the page and try again.');
+            alert('Vinted Filter: Popup was blocked! Please allow popups for this site in your browser settings, then refresh the page and try again.');
             return false;
+        } else {
+            updateStatusMessage('A popup window has been opened to automatically solve the captcha. Please complete the captcha in the popup window. The script will automatically detect when it\'s solved and continue processing. If you do not see a popup, check your browser\'s popup settings.');
         }
-        
-        updateStatusMessage('🔓 Auto-solving captcha... please complete it in the popup');
-        
         // Start checking if captcha is solved
         startCaptchaCheck();
         return true;
