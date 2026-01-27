@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Vinted Country & City Filter (client-side)
 // @namespace    https://greasyfork.org/en/users/1550823-nigel1992
-// @version      1.4.4
+// @version      1.4.5
 // @description  Adds a country and city indicator to Vinted items and allows client-side visual filtering by including/excluding selected countries. The script uses Vinted’s public item API to retrieve country and city information. It does not perform purchases, send messages, or modify anything on Vinted servers.
 // @author       Nigel1992
 // @license      MIT
@@ -35,6 +35,32 @@
 // ==/UserScript==
 
 (function () {
+        // Check if user is logged in to Vinted
+        function isUserLoggedIn() {
+            // Vinted sets a cookie 'secure, logged_in' or similar, but we can also check for the presence of the user menu
+            // This selector may need adjustment if Vinted changes their layout
+            return !!document.querySelector('a[href^="/member/"]') || !!document.querySelector('a[href^="/profile"]') || document.cookie.includes('secure, logged_in') || document.cookie.includes('logged_in');
+        }
+
+        if (!isUserLoggedIn()) {
+            const msg = '⚠️ You must be logged in to Vinted for this script to work. Please log in and refresh the page.';
+            alert(msg);
+            // Optionally, show a visible message on the page as well
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.style.position = 'fixed';
+            div.style.top = '0';
+            div.style.left = '0';
+            div.style.width = '100%';
+            div.style.background = '#ffefc1';
+            div.style.color = '#a00';
+            div.style.fontSize = '18px';
+            div.style.textAlign = 'center';
+            div.style.zIndex = '99999';
+            div.style.padding = '12px 0';
+            document.body.appendChild(div);
+            return;
+        }
     'use strict';
 
     /* =========================
