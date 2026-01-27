@@ -43,7 +43,9 @@
         return !!document.querySelector('figure.header-avatar');
     }
 
-    if (!isUserLoggedIn()) {
+    // Skip login check if captcha is being shown (isPausedForCaptcha or captcha warning visible)
+    const captchaWarning = document.getElementById('vinted-captcha-warning');
+    if (!isUserLoggedIn() && !(window.isPausedForCaptcha || (captchaWarning && captchaWarning.style.display === 'block'))) {
         const msg = '⚠️ [Vinted Country & City Filter] You must be logged in to Vinted for this script to work. Please log in and refresh the page.';
         const banner = document.createElement('div');
         banner.textContent = msg;
