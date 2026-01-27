@@ -37,10 +37,22 @@
 
 (function () {
     // Check if user is logged in to Vinted
+
     function isUserLoggedIn() {
-        // Vinted sets a cookie 'secure, logged_in' or similar, but we can also check for the presence of the user menu
-        // This selector may need adjustment if Vinted changes their layout
-        return !!document.querySelector('a[href^="/member/"]') || !!document.querySelector('a[href^="/profile"]') || document.cookie.includes('secure, logged_in') || document.cookie.includes('logged_in');
+        // Check for user menu links, cookies, or a visible 'Log out' button/span
+        if (
+            document.querySelector('a[href^="/member/"]') ||
+            document.querySelector('a[href^="/profile"]') ||
+            document.cookie.includes('secure, logged_in') ||
+            document.cookie.includes('logged_in')
+        ) {
+            return true;
+        }
+        // Check for a visible 'Log out' button or span (case-insensitive)
+        const logoutEl = Array.from(document.querySelectorAll('span,button,a,div')).find(el =>
+            el.textContent && el.textContent.trim().toLowerCase() === 'log out'
+        );
+        return !!logoutEl;
     }
 
     if (!isUserLoggedIn()) {
