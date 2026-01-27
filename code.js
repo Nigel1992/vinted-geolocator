@@ -147,28 +147,27 @@
     ========================== */
 
     function openCaptchaPopup() {
-        const apiUrl = `https://${location.hostname}/api/v2/items/1/details`;
-        
-        // Close existing popup if any
-        if (captchaPopup && !captchaPopup.closed) {
-            captchaPopup.close();
-        }
-        
-        // Open small popup window
-        captchaPopup = window.open(
-            apiUrl,
-            'VintedCaptcha',
-            'width=500,height=600,scrollbars=yes,resizable=yes'
-        );
-        
-        // Check if popup was blocked
-        if (!captchaPopup || captchaPopup.closed || typeof captchaPopup.closed === 'undefined') {
-            console.warn('[Vinted Filter] Popup was blocked by browser. Please allow popups for this site and refresh the page.');
-            updateStatusMessage('⚠️ Popup blocked! Please allow popups for this site in your browser settings, then refresh the page and try again.');
-            alert('Vinted Filter: Popup was blocked! Please allow popups for this site in your browser settings, then refresh the page and try again.');
-            return false;
-        } else {
-            updateStatusMessage('A popup window has been opened to automatically solve the captcha. Please complete the captcha in the popup window. The script will automatically detect when it\'s solved and continue processing. If you do not see a popup, check your browser\'s popup settings.');
+        // Instead of a popup, show a persistent banner at the top of the site
+        const bannerId = 'vinted-captcha-banner';
+        let banner = document.getElementById(bannerId);
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.id = bannerId;
+            banner.style.position = 'fixed';
+            banner.style.top = '0';
+            banner.style.left = '0';
+            banner.style.width = '100%';
+            banner.style.background = '#fffbe6';
+            banner.style.color = '#a00';
+            banner.style.fontSize = '18px';
+            banner.style.textAlign = 'center';
+            banner.style.zIndex = '99999';
+            banner.style.padding = '16px 0';
+            banner.style.borderBottom = '2px solid #ffe066';
+            banner.innerHTML = '<b>Vinted Filter:</b> Please complete the captcha challenge below to continue using the script. The script will automatically resume once the captcha is solved.';
+            document.body.appendChild(banner);
+            // Optionally, scroll to top so user sees the banner
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         // Start checking if captcha is solved
         startCaptchaCheck();
